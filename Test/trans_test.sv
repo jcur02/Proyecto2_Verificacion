@@ -21,14 +21,28 @@ class trans_test extends uvm_test;
       uvm_config_db#(virtual mesh_gnrt_if)::set(this, "trans_env.agent.*", "vif", vif);
   endfunction
 
-    // run phase
+  // run phase
   virtual task run_phase(uvm_phase phase);
-    gen_sequence seq = gen_sequence::type_id::create("seq");
+    gen_sequence         seq_random;
+    corner_seq_same_dst  seq_corner;
+    all_src_same_dst_seq  seq_corner2;
+
     phase.raise_objection(this);
     apply_reset();
-    
-    seq.randomize();
-    seq.start(env.agent.sequencer);
+
+    // 1) Tráfico random
+    seq_random = gen_sequence::type_id::create("seq_random");
+    assert(seq_random.randomize());
+    seq_random.start(env.agent.sequencer);
+
+    // 2) Caso de esquina
+    //seq_corner = corner_seq_same_dst::type_id::create("seq_corner");
+    //seq_corner.start(env.agent.sequencer);
+
+    // 3) Caso de esquina
+    //seq_corner2 = all_src_same_dst_seq::type_id::create("seq_corner2");
+    //seq_corner2.start(env.agent.sequencer);
+
     repeat (5000) @(posedge vif.clk);
     phase.drop_objection(this);
   endtask
