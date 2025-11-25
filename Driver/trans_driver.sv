@@ -38,16 +38,30 @@ class trans_driver extends uvm_driver#(trans_item);
     
     // task para enviar la transaccion al DUT
   virtual task drive_item(trans_item m_item);
+
+    // Esperar retraso de ciclos antes de enviar el paquete
+    repeat (m_item.send_gap) @(posedge vif.clk);
     // generar el paquete completo a enviar al DUT
     m_item.packet = { m_item.next_jump,
                   m_item.target_row_out,
                   m_item.target_column_out,
                   m_item.mode,
                   m_item.payload };
+
+    // Inyectar error 
+    if (m_item.inject_error) begin
+      m_item.packet[0] = ~m_item.packet[0]; 
+    end
     
     // poner pnding en 1 y cargar datos
     vif.pndng_i_in[m_item.sender] <= 1'b1;
     vif.data_out_i_in[m_item.sender] <= m_item.packet;
+
+    // registrar envío 
+    trans_item::send_t_send[m_item.target_row_out]
+                           [m_item.target_column_out].push_back($time);
+    trans_item::send_src[m_item.target_row_out]
+                        [m_item.target_column_out].push_back(m_item.sender);
       
     // esperar a que el DUT lea los datos
     wait (vif.popin[m_item.sender] == 1'b1);
