@@ -20,6 +20,7 @@ module tb;
     clk <= 0;
     uvm_config_db#(virtual mesh_gnrt_if)::set(null, "uvm_test_top", "vif", _if);
     run_test("trans_test");
+    //run_test("trans_test_reset_mid_traffic");
   end
   
   initial begin
