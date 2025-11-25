@@ -12,6 +12,12 @@ class trans_item extends uvm_sequence_item;
   bit [PCK_SZ-1:0] packet; // paquete completo para enviar al DUT
   randc bit [3:0] sender; // ID del nodo que envia la transaccion
   bit [3:0] receptor; // ID del nodo que recibe la transaccion
+  rand bit [5:0] send_gap;  // en ciclos
+  rand bit inject_error
+
+  // colas para guardar cuales source se han usado
+  static time send_t_send[6][6][$];
+  static int  send_src    [6][6][$];
 
   // constraints 
   constraint trgt1 { target_row_out inside {0,1,2,3,4,5}; }
@@ -38,6 +44,8 @@ class trans_item extends uvm_sequence_item;
   	`uvm_field_int (packet, UVM_DEFAULT)
     `uvm_field_int (sender, UVM_DEFAULT)
   	`uvm_field_int (receptor, UVM_DEFAULT)
+    `uvm_field_int (send_gap, UVM_DEFAULT)
+    `uvm_field_int (inject_error, UVM_DEFAULT)
   `uvm_object_utils_end
   
   // constructor
