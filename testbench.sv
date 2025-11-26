@@ -1,5 +1,4 @@
 `include "uvm_macros.svh"
-`include "Archivos_proyecto_2/Router_library.sv"
 import uvm_pkg::*;
 
 // This is the base transaction object that will be used
@@ -82,7 +81,7 @@ class gen_sequence extends uvm_sequence;
         trans_item m_item = trans_item::type_id::create($sformatf("m_item_%0d_%0d", t, k));
         start_item(m_item);
         assert(m_item.randomize() with { sender == t; });
-        `uvm_info("SEQ", $sformatf("Generate item from terminal %0d with gap of %0d", t, m_item.send_gap), UVM_LOW)
+        `uvm_info("SEQ", $sformatf("Generate item from terminal %0d with gap of %0d payload =%0h ", t, m_item.send_gap, m_item.payload), UVM_LOW)
         finish_item(m_item);
       end
     end
@@ -105,6 +104,7 @@ class corner_seq_same_dst extends uvm_sequence #(trans_item);
         target_column_out == 1;
         send_gap          == 0;
       });
+      `uvm_info("SEQ", $sformatf("Generate item from terminal %0d with gap of %0d payload = %0h", it.sender, it.send_gap, it.payload), UVM_LOW)
       finish_item(it);
     end
   endtask
@@ -128,7 +128,7 @@ class all_src_same_dst_seq extends uvm_sequence #(trans_item);
           target_column_out == 1;
           send_gap          == 0;
         });
-        `uvm_info("SEQ", $sformatf("Generate item from terminal %0d with gap of %0d", s, it.send_gap), UVM_LOW)
+        `uvm_info("SEQ", $sformatf("Generate item from terminal %0d with gap of %0d payload = %0h", s, it.send_gap, it.payload), UVM_LOW)
         finish_item(it);
       end
     end
